@@ -99,17 +99,7 @@ export type Line = {
   pointBorderColor?: string,
   pointBorderWidth?: number,
   pointRadius?: number,
-  pointStyle?:
-    | "circle"
-    | "cross"
-    | "crossRot"
-    | "dash"
-    | "line"
-    | "rect"
-    | "rectRounded"
-    | "rectRot"
-    | "star"
-    | "triangle",
+  pointStyle?: string,
   lineTension?: number,
   data: { x: number, y: number }[],
 };
@@ -144,8 +134,8 @@ function showBar(wrapper, position: number) {
 
 // TODO: It'd be a lot more performant to draw directly to the canvas here
 // instead of using React state lifecycles to update the hover bar.
-const HoverBar = React.memo<HoverBarProps>(({ children, mousePosition }: HoverBarProps) => {
-  const wrapper = React.useRef<?HTMLDivElement>(null);
+const HoverBar = React.memo < HoverBarProps > (({ children, mousePosition }: HoverBarProps) => {
+  const wrapper = React.useRef <? HTMLDivElement > (null);
   // We avoid putting the visibility and transforms into react state to try to keep updates snappy.
   // Mouse interactions are frequent, and adding/removing the bar from the DOM would slow things
   // down a lot more than mutating the style props does.
@@ -162,9 +152,9 @@ const HoverBar = React.memo<HoverBarProps>(({ children, mousePosition }: HoverBa
 });
 
 type TooltipProps = {|
-  datapoints: { datapoint: Position, label: string, backgroundColor?: string }[],
-  xAxisLabel: ?string,
-  tooltipElement: ?HoveredElement,
+  datapoints: { datapoint: Position, label: string, backgroundColor ?: string } [],
+    xAxisLabel: ?string,
+      tooltipElement: ?HoveredElement,
 |};
 
 const TwoDimensionalTooltip = ({ datapoints, xAxisLabel, tooltipElement }: TooltipProps) => {
@@ -296,45 +286,45 @@ function MenuContent({ config, saveConfig }: MenuContentProps) {
 function TwoDimensionalPlot(props: Props) {
   const { config, saveConfig } = props;
   const { path, minXVal, maxXVal, minYVal, maxYVal, pointRadiusOverride } = config;
-  const [hasUserPannedOrZoomed, setHasUserPannedOrZoomed] = React.useState<boolean>(false);
-  const [hasVerticalExclusiveZoom, setHasVerticalExclusiveZoom] = React.useState<boolean>(false);
-  const [hasBothAxesZoom, setHasBothAxesZoom] = React.useState<boolean>(false);
-  const tooltip = React.useRef<?HTMLDivElement>(null);
-  const chartComponent = React.useRef<?ChartComponent>(null);
+  const [hasUserPannedOrZoomed, setHasUserPannedOrZoomed] = React.useState < boolean > (false);
+  const [hasVerticalExclusiveZoom, setHasVerticalExclusiveZoom] = React.useState < boolean > (false);
+  const [hasBothAxesZoom, setHasBothAxesZoom] = React.useState < boolean > (false);
+  const tooltip = React.useRef <? HTMLDivElement > (null);
+  const chartComponent = React.useRef <? ChartComponent > (null);
 
-  const [mousePosition, updateMousePosition] = React.useState<?{ x: number, y: number }>(null);
+  const [mousePosition, updateMousePosition] = React.useState <? { x: number, y: number } > (null);
 
   const maybeBobject: mixed = useLatestMessageDataItem(path.value, "bobjects")?.queriedData[0]?.value;
-  const message: ?PlotMessage = isBobject(maybeBobject) ? deepParse(maybeBobject) : cast<PlotMessage>(maybeBobject);
+  const message: ?PlotMessage = isBobject(maybeBobject) ? deepParse(maybeBobject) : cast < PlotMessage > (maybeBobject);
   const { title, yAxisLabel, xAxisLabel, gridColor, lines = [], points = [], polygons = [] } = message || {};
   const datasets = React.useMemo(
     () =>
       message
         ? [
-            ...lines.map((line) => {
-              const l = { ...pick(line, keysToPick), showLine: true, fill: false };
-              if (pointRadiusOverride) {
-                l.pointRadius = pointRadiusOverride;
-              }
+          ...lines.map((line) => {
+            const l = { ...pick(line, keysToPick), showLine: true, fill: false };
+            if (pointRadiusOverride) {
+              l.pointRadius = pointRadiusOverride;
+            }
 
-              return l;
-            }),
-            ...points.map((point) => {
-              const pt = pick(point, keysToPick);
-              if (pointRadiusOverride) {
-                pt.pointRadius = pointRadiusOverride;
-              }
-              return pt;
-            }),
-            ...polygons.map((polygon) => ({
-              ...pick(polygon, keysToPick),
-              data: polygon.data[0] ? polygon.data.concat([polygon.data[0]]) : polygon.data,
-              fill: true,
-              pointRadius: 0,
-              showLine: true,
-              lineTension: 0,
-            })),
-          ].sort((a, b) => (b.order || 0) - (a.order || 0))
+            return l;
+          }),
+          ...points.map((point) => {
+            const pt = pick(point, keysToPick);
+            if (pointRadiusOverride) {
+              pt.pointRadius = pointRadiusOverride;
+            }
+            return pt;
+          }),
+          ...polygons.map((polygon) => ({
+            ...pick(polygon, keysToPick),
+            data: polygon.data[0] ? polygon.data.concat([polygon.data[0]]) : polygon.data,
+            fill: true,
+            pointRadius: 0,
+            showLine: true,
+            lineTension: 0,
+          })),
+        ].sort((a, b) => (b.order || 0) - (a.order || 0))
         : [],
     [lines, message, pointRadiusOverride, points, polygons]
   );
@@ -368,9 +358,9 @@ function TwoDimensionalPlot(props: Props) {
             ticks: hasUserPannedOrZoomed
               ? {}
               : {
-                  min: parseFloat(minYVal) ? parseFloat(minYVal) : getBufferedMinMax(allYs).min,
-                  max: parseFloat(maxYVal) ? parseFloat(maxYVal) : getBufferedMinMax(allYs).max,
-                },
+                min: parseFloat(minYVal) ? parseFloat(minYVal) : getBufferedMinMax(allYs).min,
+                max: parseFloat(maxYVal) ? parseFloat(maxYVal) : getBufferedMinMax(allYs).max,
+              },
           },
         ],
         xAxes: [
@@ -380,9 +370,9 @@ function TwoDimensionalPlot(props: Props) {
             ticks: hasUserPannedOrZoomed
               ? {}
               : {
-                  min: parseFloat(minXVal) ? parseFloat(minXVal) : getBufferedMinMax(allXs).min,
-                  max: parseFloat(maxXVal) ? parseFloat(maxXVal) : getBufferedMinMax(allXs).max,
-                },
+                min: parseFloat(minXVal) ? parseFloat(minXVal) : getBufferedMinMax(allXs).min,
+                max: parseFloat(maxXVal) ? parseFloat(maxXVal) : getBufferedMinMax(allXs).max,
+              },
           },
         ],
       },
@@ -425,8 +415,8 @@ function TwoDimensionalPlot(props: Props) {
     }
   }, []);
 
-  const scaleBounds = React.useRef<?$ReadOnlyArray<ScaleBounds>>();
-  const hoverBar = React.useRef<?HTMLElement>();
+  const scaleBounds = React.useRef <? $ReadOnlyArray < ScaleBounds >> ();
+  const hoverBar = React.useRef <? HTMLElement > ();
 
   const onScaleBoundsUpdate = React.useCallback((scales) => {
     scaleBounds.current = scales;
@@ -626,4 +616,4 @@ TwoDimensionalPlot.shortcuts = [
   { description: "Zoom both vertically and horizontally", keys: ["b" + "scroll"] },
   { description: "Zoom to percentage (10% - 100%)", keys: ["⌘", "1|2|...|9|0"] },
 ];
-export default hot(Panel<Config>(TwoDimensionalPlot));
+export default hot(Panel < Config > (TwoDimensionalPlot));
